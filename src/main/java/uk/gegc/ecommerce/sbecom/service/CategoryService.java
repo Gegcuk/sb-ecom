@@ -1,12 +1,11 @@
 package uk.gegc.ecommerce.sbecom.service;
 
-import uk.gegc.ecommerce.sbecom.model.Category;
-
-import java.util.List;
+import uk.gegc.ecommerce.sbecom.payload.CategoryDTO;
+import uk.gegc.ecommerce.sbecom.payload.CategoryResponse;
 
 public interface CategoryService {
-    List<Category> getAllCategories();
-    void createCategory(Category category);
-    String deleteCategory(Long categoryId);
-    Category updateCategory(Category category, Long categoryId);
+    CategoryResponse getAllCategories(int pageNumber, int pageSize);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
+    CategoryDTO deleteCategory(Long categoryId);
+    CategoryDTO updateCategory(CategoryDTO category, Long categoryId);
 }
