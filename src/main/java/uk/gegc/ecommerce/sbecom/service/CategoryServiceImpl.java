@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uk.gegc.ecommerce.sbecom.exceptions.APIException;
 import uk.gegc.ecommerce.sbecom.exceptions.ResourceNotFoundException;
@@ -27,16 +28,22 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryResponse getAllCategories(int pageNumber, int pageSize) {
+    public CategoryResponse getAllCategories(int pageNumber, int pageSize, String sortBy, String sortOrder) {
 
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+
         List<Category> listOfCategories = categoryPage.getContent();
         if (listOfCategories.isEmpty())
             throw new APIException("No category created yet.");
         List<CategoryDTO> categoryDTOs = listOfCategories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .collect(Collectors.toList());
+
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContent(categoryDTOs);
         categoryResponse.setPageNumber(categoryPage.getNumber());
