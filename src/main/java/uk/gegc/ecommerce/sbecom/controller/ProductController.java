@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import uk.gegc.ecommerce.sbecom.model.Product;
 import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
 import uk.gegc.ecommerce.sbecom.payload.ProductResponse;
+import uk.gegc.ecommerce.sbecom.repositories.ProductRepository;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
 
 @RestController
 @RequestMapping("/api")
 public class ProductController {
 
-    @Autowired
+    final
     ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product, @PathVariable Long categoryId){
@@ -42,4 +47,15 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
+    @PostMapping ("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product, @PathVariable Long productId){
+        ProductDTO updatedProductDTO = productService.updateProduct(productId, product);
+        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
+        ProductDTO deletedProductDTO = productService.deleteProduct(productId);
+        return new ResponseEntity<>(deletedProductDTO, HttpStatus.OK);
+    }
 }

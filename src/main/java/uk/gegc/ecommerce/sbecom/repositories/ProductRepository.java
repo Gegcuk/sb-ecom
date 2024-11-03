@@ -4,6 +4,7 @@
     import org.springframework.stereotype.Repository;
     import uk.gegc.ecommerce.sbecom.model.Category;
     import uk.gegc.ecommerce.sbecom.model.Product;
+    import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
 
     import java.util.List;
 
@@ -12,4 +13,5 @@
         List<Product> findByCategoryOrderByPriceAsc(Category category);
 
         List<Product> findByProductNameLikeIgnoreCase(String keyword);
+
     }
