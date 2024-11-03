@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gegc.ecommerce.sbecom.model.Product;
 import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
+import uk.gegc.ecommerce.sbecom.payload.ProductResponse;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
 
 @RestController
@@ -23,5 +24,16 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts(){
+        ProductResponse productResponse = productService.getAllProducts();
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId){
+        ProductResponse productResponse = productService.searchByCategory(categoryId);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
 
 }
