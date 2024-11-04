@@ -1,9 +1,10 @@
 package uk.gegc.ecommerce.sbecom.service;
 
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import uk.gegc.ecommerce.sbecom.exceptions.APIException;
 import uk.gegc.ecommerce.sbecom.exceptions.ResourceNotFoundException;
 import uk.gegc.ecommerce.sbecom.model.Category;
 import uk.gegc.ecommerce.sbecom.model.Product;
@@ -11,34 +12,50 @@ import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
 import uk.gegc.ecommerce.sbecom.payload.ProductResponse;
 import uk.gegc.ecommerce.sbecom.repositories.CategoryRepository;
 import uk.gegc.ecommerce.sbecom.repositories.ProductRepository;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class ProductServiceImpl implements ProductService{
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+    private final FileService fileService;
+    @Value("${project.image}")
+    private String path;
+
+    public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper, FileService fileService) {
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
+        this.modelMapper = modelMapper;
+        this.fileService = fileService;
+    }
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-        Product product = modelMapper.map(productDTO, Product.class);
-        product.setCategory(category);
-        double specialPrice = product.getPrice() - (product.getDiscount() * 0.01 * product.getPrice());
-        product.setSpecialPrice(specialPrice);
-        product.setImage("default.png");
-        Product savedProduct = productRepository.save(product);
+        boolean isProductNotPresent = true;
+        List<Product> products = category.getProducts();
+        for (Product product : products) {
+            if (product.getProductName().equals(productDTO.getProductName())) {
+                isProductNotPresent = false;
+                break;
+            }
+        }
+        if(isProductNotPresent) {
+            Product product = modelMapper.map(productDTO, Product.class);
+            product.setCategory(category);
+            double specialPrice = product.getPrice() - (product.getDiscount() * 0.01 * product.getPrice());
+            product.setSpecialPrice(specialPrice);
+            product.setImage("default.png");
+            Product savedProduct = productRepository.save(product);
 
-        return modelMapper.map(savedProduct, ProductDTO.class);
+            return modelMapper.map(savedProduct, ProductDTO.class);
+        } else {
+            throw new APIException("Product already exists");
+        }
     }
 
     @Override
@@ -47,6 +64,11 @@ public class ProductServiceImpl implements ProductService{
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
+
+        if(products.isEmpty()){
+            throw new APIException("No products present");
+        }
+
         ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDTOS);
         return productResponse;
@@ -89,8 +111,7 @@ public class ProductServiceImpl implements ProductService{
         productFromDB.setSpecialPrice(product.getSpecialPrice());
 
         Product savedProduct = productRepository.save(productFromDB);
-        ProductDTO savedProductDTO = modelMapper.map(savedProduct, ProductDTO.class);
-        return savedProductDTO;
+        return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
     @Override
@@ -98,34 +119,17 @@ public class ProductServiceImpl implements ProductService{
         Product productToDelete = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         productRepository.delete(productToDelete);
-        ProductDTO deletedProductDTO = modelMapper.map(productToDelete, ProductDTO.class);
-        return deletedProductDTO;
+        return modelMapper.map(productToDelete, ProductDTO.class);
     }
 
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         Product productFromDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-        String path = "/images";
-        String fileName = uploadImage(path, image);
+
+        String fileName = fileService.uploadImage(path, image);
         productFromDB.setImage(fileName);
         Product updatedProduct = productRepository.save(productFromDB);
-        ProductDTO updatedProductDTO = modelMapper.map(updatedProduct, ProductDTO.class);
-        return updatedProductDTO;
-    }
-
-    private String uploadImage(String path, MultipartFile file) throws IOException {
-        String originalFileName = file.getOriginalFilename();
-        String randomId = UUID.randomUUID().toString();
-
-        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
-        String filePath = path + File.separator + fileName;
-
-        File folder = new File(path);
-        if(!folder.exists()) folder.mkdirs();
-
-        Files.copy(file.getInputStream(), Paths.get(filePath));
-        System.out.println();
-        return fileName;
+        return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 }

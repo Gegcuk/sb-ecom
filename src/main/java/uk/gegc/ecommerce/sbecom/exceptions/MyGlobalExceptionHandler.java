@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uk.gegc.ecommerce.sbecom.payload.APIResponse;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class MyGlobalExceptionHandler{
             String message = err.getDefaultMessage();
             response.put(fieldName, message);
         });
-        return new ResponseEntity<Map<String, String>>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

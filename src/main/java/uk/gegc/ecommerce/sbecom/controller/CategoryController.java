@@ -5,12 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gegc.ecommerce.sbecom.config.AppConstants;
-import uk.gegc.ecommerce.sbecom.model.Category;
 import uk.gegc.ecommerce.sbecom.payload.CategoryDTO;
 import uk.gegc.ecommerce.sbecom.payload.CategoryResponse;
 import uk.gegc.ecommerce.sbecom.service.CategoryService;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("api/")

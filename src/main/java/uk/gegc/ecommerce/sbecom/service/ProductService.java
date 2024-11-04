@@ -1,7 +1,6 @@
 package uk.gegc.ecommerce.sbecom.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import uk.gegc.ecommerce.sbecom.model.Product;
 import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
 import uk.gegc.ecommerce.sbecom.payload.ProductResponse;
 
