@@ -1,16 +1,14 @@
 package uk.gegc.ecommerce.sbecom.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gegc.ecommerce.sbecom.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 import uk.gegc.ecommerce.sbecom.payload.ProductDTO;
 import uk.gegc.ecommerce.sbecom.payload.ProductResponse;
-import uk.gegc.ecommerce.sbecom.repositories.ProductRepository;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -24,9 +22,9 @@ public class ProductController {
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product, @PathVariable Long categoryId){
-        ProductDTO productDTO = productService.addProduct(categoryId, product);
-        return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO, @PathVariable Long categoryId){
+        ProductDTO addedProductDTO = productService.addProduct(categoryId, productDTO);
+        return new ResponseEntity<>(addedProductDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/public/products")
@@ -47,9 +45,9 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
-    @PostMapping ("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product, @PathVariable Long productId){
-        ProductDTO updatedProductDTO = productService.updateProduct(productId, product);
+    @PutMapping ("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO, @PathVariable Long productId){
+        ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
 
@@ -57,5 +55,11 @@ public class ProductController {
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
         ProductDTO deletedProductDTO = productService.deleteProduct(productId);
         return new ResponseEntity<>(deletedProductDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestParam("image") MultipartFile image) throws IOException {
+        ProductDTO updatedProduct =  productService.updateProductImage(productId, image);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 }
