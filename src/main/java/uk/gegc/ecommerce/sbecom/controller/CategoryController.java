@@ -1,48 +1,45 @@
 package uk.gegc.ecommerce.sbecom.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gegc.ecommerce.sbecom.config.AppConstants;
-import uk.gegc.ecommerce.sbecom.payload.CategoryDTO;
-import uk.gegc.ecommerce.sbecom.payload.CategoryResponse;
+import org.springframework.web.server.ResponseStatusException;
+import uk.gegc.ecommerce.sbecom.model.Category;
 import uk.gegc.ecommerce.sbecom.service.CategoryService;
 
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("api/")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    @GetMapping("/public/categories")
+    public ResponseEntity<List<Category>> getAllCategories(){
+        List<Category> allCategories = categoryService.getAllCategories();
+        return new ResponseEntity<>(allCategories, OK);
     }
 
-    @GetMapping("public/categories")
-    public ResponseEntity<CategoryResponse> getAllCategories(@RequestParam(name="page", defaultValue = AppConstants.PAGE_NUMBER, required = false) int pageNumber,
-                                                             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) int pageSize,
-                                                             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
-                                                             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder){
-        CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+    @PostMapping("/admin/categories")
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category){
+        categoryService.createCategory(category);
+        return new ResponseEntity<>("Category added successfully", CREATED);
     }
 
-    @PostMapping("public/categories")
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO){
-        CategoryDTO savedCategoryDTO = categoryService.createCategory(categoryDTO);
-        return new ResponseEntity<>(savedCategoryDTO, HttpStatus.CREATED);
+    @DeleteMapping("/admin/categories/{categoryId}")
+    public ResponseEntity<String> deleteCategory(@PathVariable(name = "categoryId") Long categoryId){
+        String status = categoryService.deleteCategory(categoryId);
+        return new ResponseEntity<>(status, OK);
     }
 
-    @DeleteMapping("admin/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId){
-        CategoryDTO deleteCategory = categoryService.deleteCategory(categoryId);
-        return new ResponseEntity<>(deleteCategory, HttpStatus.OK);
-    }
-
-    @PutMapping("/public/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Long categoryId){
-        CategoryDTO updatedCategoryDTO = categoryService.updateCategory(categoryDTO, categoryId);
-        return new ResponseEntity<>( updatedCategoryDTO, HttpStatus.OK);
+    @PutMapping("/admin/categories/{categoryId}")
+    public ResponseEntity<String> updateCategory(@PathVariable(name = "categoryId") Long categoryId,
+                                                 @Valid @RequestBody Category category){
+        Category savedCategory = categoryService.updateCategory(categoryId, category);
+        return new ResponseEntity<>("Category with category id=" + savedCategory.getCategoryId() + " updated", OK);
     }
 }
