@@ -91,25 +91,27 @@ class CategoryServiceImplTest {
 
     @Test
     void testCreateCategory_AlreadyExists() {
-        when(modelMapper.map(categoryDto, Category.class)).thenReturn(category); // Ensure a valid Category object is returned
-        when(categoryRepository.findByCategoryName("Electronics")).thenReturn(category); // Mock a valid Category object
+        when(categoryRepository.findByCategoryName("Electronics")).thenReturn(category);
 
-        APIException exception = assertThrows(APIException.class,
-                () -> categoryService.createCategory(categoryDto));
+        when(modelMapper.map(categoryDto, Category.class)).thenReturn(category);
 
+        APIException exception = assertThrows(APIException.class, () -> categoryService.createCategory(categoryDto));
         assertEquals("Category with the name Electronics already exists", exception.getMessage());
 
         verify(categoryRepository, times(1)).findByCategoryName("Electronics");
-        verify(categoryRepository, never()).save(any(Category.class)); // Ensure save is never called
+        verify(categoryRepository, never()).save(any(Category.class));
     }
 
     @Test
     void testDeleteCategory_Success() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(modelMapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
 
-        String response = categoryService.deleteCategory(1L);
+        CategoryDtoResponse response = categoryService.deleteCategory(1L);
 
-        assertEquals("Category with id = 1 deleted successfully", response);
+        assertNotNull(response);
+        assertEquals(1, response.getContent().size());
+        assertEquals("Electronics", response.getContent().get(0).getCategoryName());
 
         verify(categoryRepository, times(1)).findById(1L);
         verify(categoryRepository, times(1)).delete(category);
