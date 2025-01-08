@@ -41,7 +41,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testGetAllCategories() throws Exception {
+    public void testGetAllCategories_Success() throws Exception {
         Mockito.when(categoryService.getAllCategories()).thenReturn(sampleCategoryDtoResponse);
 
         mockMvc.perform(get("/api/public/categories")
@@ -52,7 +52,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testCreateCategory() throws Exception {
+    public void testCreateCategory_Success() throws Exception {
         Mockito.when(categoryService.createCategory(Mockito.any(CategoryDto.class)))
                 .thenReturn(sampleCategoryDtoResponse);
 
@@ -65,17 +65,18 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testDeleteCategory() throws Exception {
-        Mockito.when(categoryService.deleteCategory(1L)).thenReturn("Category deleted successfully");
+    public void testDeleteCategory_Success() throws Exception {
+        Mockito.when(categoryService.deleteCategory(1L)).thenReturn(sampleCategoryDtoResponse);
 
         mockMvc.perform(delete("/api/admin/categories/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Category deleted successfully"));
+                .andExpect(jsonPath("$.content[0].categoryId", is(1)))
+                .andExpect(jsonPath("$.content[0].categoryName", is("Electronics")));
     }
 
     @Test
-    public void testUpdateCategory() throws Exception {
+    public void testUpdateCategory_Success() throws Exception {
         Mockito.when(categoryService.updateCategory(Mockito.eq(1L), Mockito.any(CategoryDto.class)))
                 .thenReturn(sampleCategoryDtoResponse);
 
