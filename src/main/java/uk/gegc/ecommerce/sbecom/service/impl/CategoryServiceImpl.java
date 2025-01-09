@@ -3,6 +3,9 @@ package uk.gegc.ecommerce.sbecom.service.impl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gegc.ecommerce.sbecom.dto.request.CategoryDto;
 import uk.gegc.ecommerce.sbecom.dto.response.CategoryDtoResponse;
@@ -12,6 +15,7 @@ import uk.gegc.ecommerce.sbecom.model.Category;
 import uk.gegc.ecommerce.sbecom.repository.CategoryRepository;
 import uk.gegc.ecommerce.sbecom.service.CategoryService;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,9 +26,12 @@ public class CategoryServiceImpl implements CategoryService {
     private final ModelMapper modelMapper;
 
     @Override
-    public CategoryDtoResponse getAllCategories() {
-        List<Category> categories;
-        categories = categoryRepository.findAll();
+    public CategoryDtoResponse getAllCategories(String pageNumber, String pageSize) {
+
+        Pageable pageDetails = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
+        Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+
+        List<Category> categories = categoryPage.getContent();
 
         if(categories.isEmpty())
             throw new APIException("No category created till now");
@@ -41,16 +48,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDtoResponse createCategory(CategoryDto categoryToCreate) {
-        if (categoryToCreate == null || categoryToCreate.getCategoryName() == null || categoryToCreate.getCategoryName().isBlank()) {
+        if (categoryToCreate == null || categoryToCreate.getCategoryName().isBlank())
             throw new APIException("Invalid category data provided");
-        }
 
         Category category = modelMapper.map(categoryToCreate, Category.class);
 
         Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
-        if (savedCategory != null) {
+        if (savedCategory != null)
             throw new APIException("Category with the name " + category.getCategoryName() + " already exists");
-        }
 
         Category createdCategory = categoryRepository.save(category);
 
@@ -81,5 +86,26 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.save(categoryFromDto);
 
         return new CategoryDtoResponse(List.of(modelMapper.map(savedCategory, CategoryDto.class)));
+    }
+
+    @Override
+    public void initDbWithDefaultValues() {
+        List<Category> defaultCategories = Arrays.asList(
+                new Category("Football"),
+                new Category("Tennis"),
+                new Category("Table tennis"),
+                new Category("Ice hockey"),
+                new Category("Rugby"),
+                new Category("Handball"),
+                new Category("Basketball"),
+                new Category("Boxing"),
+                new Category("Volleyball"),
+                new Category("American football"),
+                new Category("Water polo"),
+                new Category("Cricket"),
+                new Category("Netball")
+        );
+
+        categoryRepository.saveAll(defaultCategories);
     }
 }

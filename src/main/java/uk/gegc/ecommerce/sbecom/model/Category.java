@@ -25,4 +25,8 @@ public class Category {
     @Size(max = 50, message = "Category name must not be longer that 50 symbols.")
     @NotBlank(message = "Category name must not be blank =(")
     private String categoryName;
+
+    public Category(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }
