@@ -2,14 +2,12 @@ package uk.gegc.ecommerce.sbecom.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gegc.ecommerce.sbecom.config.AppConstants;
 import uk.gegc.ecommerce.sbecom.dto.request.CategoryDto;
 import uk.gegc.ecommerce.sbecom.dto.response.CategoryDtoResponse;
 import uk.gegc.ecommerce.sbecom.service.CategoryService;
-
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -26,9 +24,11 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryDtoResponse> getAllCategories(
-            @RequestParam(name = "page", defaultValue = "0") String pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "10") String pageSize){
-        CategoryDtoResponse categoryDtoResponse = categoryService.getAllCategories(pageNumber, pageSize);
+            @RequestParam(name = "page", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder){
+        CategoryDtoResponse categoryDtoResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(categoryDtoResponse, OK);
     }
 

@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uk.gegc.ecommerce.sbecom.dto.request.CategoryDto;
 import uk.gegc.ecommerce.sbecom.dto.response.CategoryDtoResponse;
@@ -26,9 +27,12 @@ public class CategoryServiceImpl implements CategoryService {
     private final ModelMapper modelMapper;
 
     @Override
-    public CategoryDtoResponse getAllCategories(String pageNumber, String pageSize) {
+    public CategoryDtoResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-        Pageable pageDetails = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
 
         List<Category> categories = categoryPage.getContent();
@@ -42,6 +46,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         CategoryDtoResponse categoryDtoResponse = new CategoryDtoResponse();
         categoryDtoResponse.setContent(categoryDtos);
+        categoryDtoResponse.setPageNumber(categoryPage.getNumber());
+        categoryDtoResponse.setPageSize(categoryPage.getSize());
+        categoryDtoResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryDtoResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryDtoResponse.setLastPage(categoryPage.isLast());
 
         return categoryDtoResponse;
     }
@@ -102,6 +111,15 @@ public class CategoryServiceImpl implements CategoryService {
                 new Category("Volleyball"),
                 new Category("American football"),
                 new Category("Water polo"),
+                new Category("Field hockey"),
+                new Category("Badminton"),
+                new Category("Futsal"),
+                new Category("Baseball"),
+                new Category("Snooker"),
+                new Category("Beach soccer"),
+                new Category("Horse racing"),
+                new Category("Beach volleyball"),
+                new Category("Winter sports"),
                 new Category("Cricket"),
                 new Category("Netball")
         );

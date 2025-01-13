@@ -6,6 +6,7 @@
     import org.springframework.web.bind.MethodArgumentNotValidException;
     import org.springframework.web.bind.annotation.ExceptionHandler;
     import org.springframework.web.bind.annotation.RestControllerAdvice;
+    import uk.gegc.ecommerce.sbecom.dto.response.APIResponse;
 
     import java.util.HashMap;
     import java.util.Map;
@@ -25,15 +26,15 @@
         }
 
         @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<String> myResourceNotFoundException(ResourceNotFoundException exception){
-            String message = exception.getMessage();
-            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException exception){
+            APIResponse apiResponse = new APIResponse(exception.getMessage(), false);
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
         @ExceptionHandler(APIException.class)
-        public ResponseEntity<String> myAPIexception(APIException exception){
-            String message = exception.getMessage();
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        public ResponseEntity<APIResponse> myAPIexception(APIException exception){
+            APIResponse apiResponse = new APIResponse(exception.getMessage(), false);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
 
 

@@ -13,5 +13,13 @@ import java.util.List;
 public class CategoryDtoResponse {
 
     private List<CategoryDto> content;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private Integer totalPages;
+    private boolean lastPage;
 
+    public CategoryDtoResponse(List<CategoryDto> content) {
+        this.content = content;
+    }
 }
