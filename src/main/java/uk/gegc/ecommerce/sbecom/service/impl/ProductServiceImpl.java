@@ -13,6 +13,7 @@ import uk.gegc.ecommerce.sbecom.repository.ProductRepository;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,28 @@ public class ProductServiceImpl implements ProductService {
         product.setSpecialPrice(specialPrice);
         Product savedProduct = productRepository.save(product);
         return new ProductDtoResponse(List.of(modelMapper.map(savedProduct, ProductDto.class)));
+    }
+
+    @Override
+    public ProductDtoResponse getAllProducts() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductDto> productDtoList = productList.stream()
+                .map((element) -> modelMapper
+                    .map(element, ProductDto.class))
+                .toList();
+        return new ProductDtoResponse(productDtoList);
+    }
+
+    @Override
+    public ProductDtoResponse searchByCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+
+        List<Product> productList = productRepository.findByCategoryOrderByPriceAsc(category);
+        List<ProductDto> productDtoList = productList.stream()
+                .map(product -> modelMapper
+                        .map(product, ProductDto.class))
+                .toList();
+        return new ProductDtoResponse(productDtoList);
     }
 }
