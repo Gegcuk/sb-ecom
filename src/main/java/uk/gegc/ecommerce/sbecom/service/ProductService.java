@@ -5,4 +5,8 @@ import uk.gegc.ecommerce.sbecom.model.Product;
 
 public interface ProductService {
     ProductDtoResponse addProduct(Product product, Long categoryId);
+
+    ProductDtoResponse getAllProducts();
+
+    ProductDtoResponse searchByCategory(Long categoryId);
 }

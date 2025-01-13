@@ -22,4 +22,16 @@ public class ProductController {
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductDtoResponse> getAllProducts(){
+        ProductDtoResponse productDtoResponse = productService.getAllProducts();
+        return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductDtoResponse> getProductsByCategory(@PathVariable (name = "categoryId") Long categoryId){
+        ProductDtoResponse productDtoResponse = productService.searchByCategory(categoryId);
+        return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
+    }
+
 }
