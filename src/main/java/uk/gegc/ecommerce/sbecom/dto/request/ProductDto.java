@@ -1,21 +1,19 @@
-package uk.gegc.ecommerce.sbecom.payload;
+package uk.gegc.ecommerce.sbecom.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductDto {
     private Long productId;
     private String productName;
     private String image;
     private Integer quantity;
     private double price;
-    private double discount;
     private double specialPrice;
+    private double discount;
 
 }

@@ -1,12 +1,10 @@
-package uk.gegc.ecommerce.sbecom.payload;
+package uk.gegc.ecommerce.sbecom.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class APIResponse {
