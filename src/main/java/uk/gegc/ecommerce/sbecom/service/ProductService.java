@@ -9,4 +9,8 @@ public interface ProductService {
     ProductDtoResponse getAllProducts();
 
     ProductDtoResponse searchByCategory(Long categoryId);
+
+    ProductDtoResponse searchProductByKeyword(String keyword);
+
+    void initDbWithDefaultValues();
 }

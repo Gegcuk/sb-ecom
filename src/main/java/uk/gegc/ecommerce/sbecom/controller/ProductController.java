@@ -15,6 +15,11 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @GetMapping("/public/init-products")
+    private void initDbWithDefaultProducts() {
+        productService.initDbWithDefaultValues();
+    }
+
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDtoResponse> addProduct(@RequestBody Product product,
                                                          @PathVariable(name = "categoryId") Long categoryId){
@@ -32,6 +37,12 @@ public class ProductController {
     public ResponseEntity<ProductDtoResponse> getProductsByCategory(@PathVariable (name = "categoryId") Long categoryId){
         ProductDtoResponse productDtoResponse = productService.searchByCategory(categoryId);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/products/search")
+    public ResponseEntity<ProductDtoResponse> getProductsByKeyword(@RequestParam(name = "keyword", required = false) String keyword){
+        ProductDtoResponse productDtoResponse = productService.searchProductByKeyword(keyword);
+        return new ResponseEntity<>(productDtoResponse, HttpStatus.FOUND);
     }
 
 }
