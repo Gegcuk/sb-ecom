@@ -1,10 +1,10 @@
 package uk.gegc.ecommerce.sbecom.service;
 
+import uk.gegc.ecommerce.sbecom.dto.request.ProductDto;
 import uk.gegc.ecommerce.sbecom.dto.response.ProductDtoResponse;
-import uk.gegc.ecommerce.sbecom.model.Product;
 
 public interface ProductService {
-    ProductDtoResponse addProduct(Product product, Long categoryId);
+    ProductDtoResponse addProduct(ProductDto product, Long categoryId);
 
     ProductDtoResponse getAllProducts();
 
@@ -13,4 +13,8 @@ public interface ProductService {
     ProductDtoResponse searchProductByKeyword(String keyword);
 
     void initDbWithDefaultValues();
+
+    ProductDtoResponse updateProduct(Long productId, ProductDto product);
+
+    ProductDtoResponse delete(Long productId);
 }
