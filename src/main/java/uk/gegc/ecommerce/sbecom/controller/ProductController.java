@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uk.gegc.ecommerce.sbecom.dto.request.ProductDto;
 import uk.gegc.ecommerce.sbecom.dto.response.ProductDtoResponse;
 import uk.gegc.ecommerce.sbecom.model.Product;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -56,6 +59,13 @@ public class ProductController {
     @DeleteMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDtoResponse> deleteProduct(@PathVariable(name = "productId") Long productId){
         ProductDtoResponse productDtoResponse = productService.delete(productId);
+        return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/products/{productId}/image")
+    public ResponseEntity<ProductDtoResponse> updateProductImage(@PathVariable Long productId,
+                                                                 @RequestParam("image")MultipartFile image) throws IOException {
+        ProductDtoResponse productDtoResponse = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
     }
 

@@ -3,6 +3,7 @@ package uk.gegc.ecommerce.sbecom.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import uk.gegc.ecommerce.sbecom.dto.request.ProductDto;
 import uk.gegc.ecommerce.sbecom.dto.response.ProductDtoResponse;
 import uk.gegc.ecommerce.sbecom.exception.APIException;
@@ -13,7 +14,12 @@ import uk.gegc.ecommerce.sbecom.repository.CategoryRepository;
 import uk.gegc.ecommerce.sbecom.repository.ProductRepository;
 import uk.gegc.ecommerce.sbecom.service.ProductService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -85,6 +91,37 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
         productRepository.delete(product);
         return new ProductDtoResponse(List.of(modelMapper.map(product, ProductDto.class)));
+    }
+
+    @Override
+    public ProductDtoResponse updateProductImage(Long productId, MultipartFile image) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+
+        String path = "images/";
+        String fileName = uploadImage(path, image);
+
+        product.setImage(fileName);
+        product = productRepository.save(product);
+
+        return new ProductDtoResponse(List.of(modelMapper.map(product, ProductDto.class)));
+    }
+
+    private String uploadImage(String path, MultipartFile image) throws IOException {
+        String originalFileName = image.getOriginalFilename();
+        System.out.println(originalFileName);
+
+        String randomId = UUID.randomUUID().toString();
+        String filename = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
+        String filePath = path + File.separator + filename;
+
+        File folder = new File(path);
+        if(!folder.exists())
+            folder.mkdir();
+
+        Files.copy(image.getInputStream(), Paths.get(filePath));
+
+        return filename;
     }
 
 
