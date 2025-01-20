@@ -1,6 +1,8 @@
 package uk.gegc.ecommerce.sbecom.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,13 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
+
+    @NotBlank
+    @Size(min = 3, message = "Product name must contain at least 3 characters")
     private String productName;
+
+    @NotBlank
+    @Size(min = 3, message = "Product description must contain at least 3 characters")
     private String description;
     private Integer quantity;
     private String image;

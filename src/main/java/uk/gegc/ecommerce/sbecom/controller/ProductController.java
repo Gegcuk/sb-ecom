@@ -1,6 +1,8 @@
 package uk.gegc.ecommerce.sbecom.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,7 @@ public class ProductController {
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDtoResponse> addProduct(@RequestBody ProductDto product,
+    public ResponseEntity<ProductDtoResponse> addProduct(@Valid @RequestBody ProductDto product,
                                                          @PathVariable(name = "categoryId") Long categoryId){
         ProductDtoResponse savedProduct = productService.addProduct(product, categoryId);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
@@ -51,7 +53,7 @@ public class ProductController {
 
     @PutMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDtoResponse> updateProduct(@PathVariable(name = "productId") Long productId,
-                                                            @RequestBody ProductDto product){
+                                                            @Valid @RequestBody ProductDto product){
         ProductDtoResponse productDtoResponse = productService.updateProduct(productId, product);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.CREATED);
     }

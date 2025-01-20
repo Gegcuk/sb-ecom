@@ -6,6 +6,7 @@ import uk.gegc.ecommerce.sbecom.model.Category;
 import uk.gegc.ecommerce.sbecom.model.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -13,4 +14,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategoryOrderByPriceAsc(Category category);
 
     List<Product> findByProductNameLikeIgnoreCase(String keyword);
+
+    Optional<Object> findByProductName(String productName);
+
+    Optional<Object> findByProductNameAndCategory(String productName, Category category);
 }

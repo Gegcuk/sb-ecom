@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,6 +27,9 @@ public class Category {
     @Size(max = 50, message = "Category name must not be longer that 50 symbols.")
     @NotBlank(message = "Category name must not be blank =(")
     private String categoryName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 
     public Category(String categoryName) {
         this.categoryName = categoryName;
