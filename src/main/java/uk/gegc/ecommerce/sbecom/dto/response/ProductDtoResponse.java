@@ -19,7 +19,7 @@ public class ProductDtoResponse {
     private Integer totalPages;
     private boolean lastPage;
 
-    public ProductDtoResponse(List<ProductDto> categoryDtoList){
-        this.content = categoryDtoList;
+    public ProductDtoResponse(List<ProductDto> productDtoList){
+        this.content = productDtoList;
     }
 }

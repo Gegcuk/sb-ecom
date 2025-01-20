@@ -3,10 +3,12 @@ package uk.gegc.ecommerce.sbecom.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uk.gegc.ecommerce.sbecom.config.AppConstants;
 import uk.gegc.ecommerce.sbecom.dto.request.ProductDto;
 import uk.gegc.ecommerce.sbecom.dto.response.ProductDtoResponse;
 import uk.gegc.ecommerce.sbecom.model.Product;
@@ -34,20 +36,35 @@ public class ProductController {
     }
 
     @GetMapping("/public/products")
-    public ResponseEntity<ProductDtoResponse> getAllProducts(){
-        ProductDtoResponse productDtoResponse = productService.getAllProducts();
+    public ResponseEntity<ProductDtoResponse> getAllProducts(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
+    ){
+        ProductDtoResponse productDtoResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
     }
 
     @GetMapping("/public/categories/{categoryId}/products")
-    public ResponseEntity<ProductDtoResponse> getProductsByCategory(@PathVariable (name = "categoryId") Long categoryId){
-        ProductDtoResponse productDtoResponse = productService.searchByCategory(categoryId);
+    public ResponseEntity<ProductDtoResponse> getProductsByCategory(@PathVariable (name = "categoryId") Long categoryId,
+                                                                    @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+                                                                    @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+                                                                    @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+                                                                    @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
+    ){
+        ProductDtoResponse productDtoResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.OK);
     }
 
     @GetMapping("/public/products/search")
-    public ResponseEntity<ProductDtoResponse> getProductsByKeyword(@RequestParam(name = "keyword", required = false) String keyword){
-        ProductDtoResponse productDtoResponse = productService.searchProductByKeyword(keyword);
+    public ResponseEntity<ProductDtoResponse> getProductsByKeyword(@RequestParam(name = "keyword", required = false) String keyword,
+                                                                   @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+                                                                   @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+                                                                   @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+                                                                   @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
+    ){
+        ProductDtoResponse productDtoResponse = productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(productDtoResponse, HttpStatus.FOUND);
     }
 
