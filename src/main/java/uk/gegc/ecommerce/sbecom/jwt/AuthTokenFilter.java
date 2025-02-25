@@ -1,4 +1,4 @@
-package uk.gegc.ecommerce.sbecom.security.jwt;
+package uk.gegc.ecommerce.sbecom.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,29 +18,32 @@ import java.io.IOException;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
+
     private JwtUtils jwtUtils;
-    private UserDetailsService userDetailsService;
+
+    private UserDetailsService userService;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
+        logger.debug("AuthToken called for URI: {}", request.getRequestURI());
         try{
             String jwt = parseJwt(request);
-            if(jwt != null && jwtUtils.validateJwtToken(jwt)){
-                String username = jwtUtils.getUsernameFromToken(jwt);
+            if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String username = jwtUtils.getUsernameFromJwtToken(jwt);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails user = userService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                logger.debug("Roles from JWT: {}", userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                logger.debug("Roles from JWT: {}", user.getAuthorities());
 
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e){
-            logger.error("Cannot set user authentication: {}", e);
+        } catch (Exception e) {
+            logger.error("Cannot set user authenctication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
