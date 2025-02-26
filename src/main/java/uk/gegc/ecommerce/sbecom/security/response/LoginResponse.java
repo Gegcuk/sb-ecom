@@ -9,8 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserInfoResponse {
-    public Long id;
+public class LoginResponse {
+//    public Long id;
     private String username;
     private List<String> roles;
     private String jwtToken;
