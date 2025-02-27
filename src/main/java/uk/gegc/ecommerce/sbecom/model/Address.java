@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "addresses")
 public class Address {
     @Id
@@ -20,18 +21,21 @@ public class Address {
     private Long addressId;
 
     @NotBlank
+    @Size(min = 5, message = "Street name must be at least 5 characters")
     private String street;
 
     @NotBlank
     private String buildingName;
 
     @NotBlank
+    @Size(min = 3, message = "City name must be at least 3 characters")
     private String city;
 
     @NotBlank
     private String state;
 
     @NotBlank
+    @Size(min = 2, message = "Country name must be at least 3 characters")
     private String country;
 
     @NotBlank

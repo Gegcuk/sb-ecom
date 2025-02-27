@@ -1,4 +1,4 @@
-package uk.gegc.ecommerce.sbecom.jwt;
+package uk.gegc.ecommerce.sbecom.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private JwtUtils jwtUtils;
 
-    private UserDetailsService userService;
+    private UserDetailsService userDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -33,7 +33,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUsernameFromJwtToken(jwt);
 
-                UserDetails user = userService.loadUserByUsername(username);
+                UserDetails user = userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 logger.debug("Roles from JWT: {}", user.getAuthorities());

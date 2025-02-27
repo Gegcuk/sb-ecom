@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "products")
 public class Product {
 
     @Id
@@ -29,11 +30,15 @@ public class Product {
     private Integer quantity;
     private String image;
     private double price;
-    private double specialPrice;
     private double discount;
+    private double specialPrice;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 
 }

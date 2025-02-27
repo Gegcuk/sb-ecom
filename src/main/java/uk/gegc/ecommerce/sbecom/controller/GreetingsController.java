@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gegc.ecommerce.sbecom.jwt.JwtUtils;
-import uk.gegc.ecommerce.sbecom.security.request.LoginRequest;
-import uk.gegc.ecommerce.sbecom.security.response.LoginResponse;
+import uk.gegc.ecommerce.sbecom.security.jwt.JwtUtils;
+import uk.gegc.ecommerce.sbecom.security.jwt.LoginRequest;
+import uk.gegc.ecommerce.sbecom.security.jwt.LoginResponse;
 
 import java.util.HashMap;
 import java.util.List;

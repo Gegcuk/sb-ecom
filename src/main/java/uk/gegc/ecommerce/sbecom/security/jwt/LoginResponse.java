@@ -1,4 +1,4 @@
-package uk.gegc.ecommerce.sbecom.security.response;
+package uk.gegc.ecommerce.sbecom.security.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,9 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class LoginResponse {
-//    public Long id;
     private String username;
     private List<String> roles;
     private String jwtToken;
-
 }

@@ -8,13 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import uk.gegc.ecommerce.sbecom.security.jwt.JwtUtils;
-import uk.gegc.ecommerce.sbecom.security.request.LoginRequest;
-import uk.gegc.ecommerce.sbecom.security.response.UserInfoResponse;
+import uk.gegc.ecommerce.sbecom.security.jwt.LoginRequest;
+import uk.gegc.ecommerce.sbecom.security.jwt.LoginResponse;
 import uk.gegc.ecommerce.sbecom.security.services.UserDetailsImpl;
 
 import java.util.HashMap;
@@ -24,7 +23,7 @@ import java.util.Map;
 @Controller
 public class AuthController {
 
-    private final JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
 
     public AuthController(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
@@ -52,7 +51,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken);
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken );
 
         return ResponseEntity.ok(response);
 
