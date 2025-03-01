@@ -1,4 +1,4 @@
-package uk.gegc.ecommerce.sbecom.security.jwt;
+package uk.gegc.ecommerce.sbecom.security.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

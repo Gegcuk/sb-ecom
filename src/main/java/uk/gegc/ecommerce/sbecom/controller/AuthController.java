@@ -11,9 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import uk.gegc.ecommerce.sbecom.security.jwt.JwtUtils;
-import uk.gegc.ecommerce.sbecom.security.jwt.LoginRequest;
-import uk.gegc.ecommerce.sbecom.security.jwt.LoginResponse;
+import uk.gegc.ecommerce.sbecom.security.request.LoginRequest;
+import uk.gegc.ecommerce.sbecom.security.response.UserInfoResponse;
 import uk.gegc.ecommerce.sbecom.security.services.UserDetailsImpl;
 
 import java.util.HashMap;
@@ -21,19 +22,23 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/api")
 public class AuthController {
 
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(JwtUtils jwtUtils) {
+    public AuthController(JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
         this.jwtUtils = jwtUtils;
+        this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest, AuthenticationManager authenticationManager){
+    @PostMapping("/auth/signin")
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication;
         try{
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (AuthenticationException exception){
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
@@ -51,7 +56,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken );
+        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken );
 
         return ResponseEntity.ok(response);
 

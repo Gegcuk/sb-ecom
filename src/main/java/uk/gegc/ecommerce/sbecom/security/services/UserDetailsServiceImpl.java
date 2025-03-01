@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uk.gegc.ecommerce.sbecom.model.User;
-import uk.gegc.ecommerce.sbecom.repositories.UserRepository;
+import uk.gegc.ecommerce.sbecom.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -15,7 +15,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        User user = userRepository.findByUserName(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username: " + username));
 
         return UserDetailsImpl.build(user);
     }

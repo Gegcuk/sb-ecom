@@ -1,4 +1,4 @@
-package uk.gegc.ecommerce.sbecom.repositories;
+package uk.gegc.ecommerce.sbecom.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import uk.gegc.ecommerce.sbecom.model.User;
