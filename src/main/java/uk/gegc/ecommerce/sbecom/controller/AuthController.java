@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gegc.ecommerce.sbecom.dto.request.SignupRequest;
 import uk.gegc.ecommerce.sbecom.repository.RoleRepository;
 import uk.gegc.ecommerce.sbecom.security.response.MessageResponse;
@@ -29,8 +30,8 @@ import uk.gegc.ecommerce.sbecom.security.services.UserDetailsImpl;
 
 import java.util.*;
 
-@Controller
-@RequestMapping("/api")
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtUtils jwtUtils;
@@ -47,7 +48,7 @@ public class AuthController {
         this.roleRepository = roleRepository;
     }
 
-    @PostMapping("/auth/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication;
         try{
@@ -76,7 +77,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest){
         if(userRepository.existsByUserName(signUpRequest.getUsername())){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken."));

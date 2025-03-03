@@ -1,6 +1,7 @@
 package uk.gegc.ecommerce.sbecom.security.services;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,8 +10,9 @@ import uk.gegc.ecommerce.sbecom.model.User;
 import uk.gegc.ecommerce.sbecom.repository.UserRepository;
 
 @Service
+@AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional

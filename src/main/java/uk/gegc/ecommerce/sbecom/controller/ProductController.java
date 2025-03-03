@@ -23,7 +23,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/public/init-products")
+    @GetMapping("/public/init/products")
     private void initDbWithDefaultProducts() {
         productService.initDbWithDefaultValues();
     }

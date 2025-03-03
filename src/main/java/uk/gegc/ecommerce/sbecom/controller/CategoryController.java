@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/public/init")
+    @GetMapping("/public/init/categories")
     private void initDbWithDefault(){
         categoryService.initDbWithDefaultValues();
     }
