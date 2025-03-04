@@ -163,25 +163,25 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", 3L));
 
         List<Product> defaultProducts = List.of(
-                new Product(null, "Football Ball", "Official size 5 football", 50, "football.png", 25.0, 20.0, 20.0, footballCategory, null),
-                new Product(null, "Football Boots", "Lightweight football boots", 30, "football_boots.png", 60.0, 48.0, 20.0, footballCategory, null),
+                new Product(null, "Football Ball", "Official size 5 football", 50, "football.png", 25.0, 20.0, 20.0, footballCategory, null, null),
+                new Product(null, "Football Boots", "Lightweight football boots", 30, "football_boots.png", 60.0, 48.0, 20.0, footballCategory, null, null),
 
-                new Product(null, "Tennis Racket", "High-quality graphite tennis racket", 30, "tennis_racket.png", 50.0, 40.0, 20.0, tennisCategory, null),
-                new Product(null, "Tennis Balls", "Pack of 3 durable tennis balls", 100, "tennis_balls.png", 15.0, 12.0, 20.0, tennisCategory, null),
+                new Product(null, "Tennis Racket", "High-quality graphite tennis racket", 30, "tennis_racket.png", 50.0, 40.0, 20.0, tennisCategory, null, null),
+                new Product(null, "Tennis Balls", "Pack of 3 durable tennis balls", 100, "tennis_balls.png", 15.0, 12.0, 20.0, tennisCategory, null, null),
 
-                new Product(null, "Basketball", "Standard size 7 basketball", 40, "basketball.png", 30.0, 24.0, 20.0, basketballCategory, null),
-                new Product(null, "Basketball Hoop", "Adjustable height basketball hoop", 15, "basketball_hoop.png", 200.0, 180.0, 10.0, basketballCategory, null),
+                new Product(null, "Basketball", "Standard size 7 basketball", 40, "basketball.png", 30.0, 24.0, 20.0, basketballCategory, null, null),
+                new Product(null, "Basketball Hoop", "Adjustable height basketball hoop", 15, "basketball_hoop.png", 200.0, 180.0, 10.0, basketballCategory, null, null),
 
-                new Product(null, "Table Tennis Paddle", "Professional table tennis paddle", 100, "table_tennis_paddle.png", 15.0, 12.0, 20.0, tableTennisCategory, null),
-                new Product(null, "Table Tennis Balls", "Pack of 6 table tennis balls", 150, "table_tennis_balls.png", 10.0, 8.0, 20.0, tableTennisCategory, null),
-                new Product(null, "Table Tennis Table", "Foldable table tennis table", 10, "table_tennis_table.png", 400.0, 350.0, 12.5, tableTennisCategory, null),
+                new Product(null, "Table Tennis Paddle", "Professional table tennis paddle", 100, "table_tennis_paddle.png", 15.0, 12.0, 20.0, tableTennisCategory, null, null),
+                new Product(null, "Table Tennis Balls", "Pack of 6 table tennis balls", 150, "table_tennis_balls.png", 10.0, 8.0, 20.0, tableTennisCategory, null, null),
+                new Product(null, "Table Tennis Table", "Foldable table tennis table", 10, "table_tennis_table.png", 400.0, 350.0, 12.5, tableTennisCategory, null, null),
 
-                new Product(null, "Ice Hockey Stick", "Durable ice hockey stick", 20, "ice_hockey_stick.png", 60.0, 50.0, 16.67, null,null),
-                new Product(null, "Ice Hockey Puck", "Official NHL ice hockey puck", 100, "ice_hockey_puck.png", 5.0, 4.0, 20.0, null,null),
+                new Product(null, "Ice Hockey Stick", "Durable ice hockey stick", 20, "ice_hockey_stick.png", 60.0, 50.0, 16.67, null,null, null),
+                new Product(null, "Ice Hockey Puck", "Official NHL ice hockey puck", 100, "ice_hockey_puck.png", 5.0, 4.0, 20.0, null,null, null),
 
-                new Product(null, "Boxing Gloves", "12oz leather boxing gloves", 25, "boxing_gloves.png", 40.0, 32.0, 20.0, null, null),
-                new Product(null, "Volleyball", "Professional volleyball", 50, "volleyball.png", 25.0, 20.0, 20.0, null, null),
-                new Product(null, "Badminton Set", "Complete badminton set for 4 players", 20, "badminton_set.png", 50.0, 45.0, 10.0, null,null)
+                new Product(null, "Boxing Gloves", "12oz leather boxing gloves", 25, "boxing_gloves.png", 40.0, 32.0, 20.0, null, null, null),
+                new Product(null, "Volleyball", "Professional volleyball", 50, "volleyball.png", 25.0, 20.0, 20.0, null, null, null),
+                new Product(null, "Badminton Set", "Complete badminton set for 4 players", 20, "badminton_set.png", 50.0, 45.0, 10.0, null,null, null)
         );
 
         productRepository.saveAll(defaultProducts);
