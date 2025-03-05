@@ -7,6 +7,6 @@ import uk.gegc.ecommerce.sbecom.model.Cart;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    @Query("SELECT c FROM cart WHERE c.user.email = ?1")
+    @Query("SELECT c from Cart c WHERE c.user.email = ?1")
     Cart findCartByEmail(String email);
 }

@@ -26,8 +26,9 @@ public class CartServiceImpl implements CartSevice {
     private final CartItemRepository cartItemRepository;
     private final ModelMapper modelMapper;
 
-    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper) {
+    public CartServiceImpl(CartRepository cartRepository, AuthUtil authUtils, ProductRepository productRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper) {
         this.cartRepository = cartRepository;
+        this.authUtils = authUtils;
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
         this.modelMapper = modelMapper;
@@ -84,13 +85,34 @@ public class CartServiceImpl implements CartSevice {
         return cartDto;
     }
 
+    @Override
+    public List<CartDto> getAllCarts() {
+
+        List<Cart> carts = cartRepository.findAll();
+        if(carts.isEmpty()) throw new APIException("No carts exists");
+
+        List<CartDto> cartDtos = carts
+                .stream()
+                .map(cart ->{
+                    CartDto cartDto = modelMapper.map(cart, CartDto.class);
+                    List<ProductDto> productDtos = cart.getCartItems()
+                            .stream()
+                            .map(p -> modelMapper.map(p.getProduct(), ProductDto.class)).toList();
+                cartDto.setProducts(productDtos);
+                return cartDto;
+                })
+                .toList();
+
+        return cartDtos;
+    }
+
     private Cart createCart() {
         Cart userCart = cartRepository.findCartByEmail(authUtils.loggedInEmail());
         if(userCart != null) return userCart;
 
         Cart cart = new Cart();
         cart.setTotalPrice(0.00);
-        cart.setUser(authUtil.loggedInUser());
+        cart.setUser(authUtils.loggedInUser());
         Cart newCart = cartRepository.save(cart);
 
         return newCart;
