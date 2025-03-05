@@ -12,14 +12,14 @@ import uk.gegc.ecommerce.sbecom.model.Product;
 import uk.gegc.ecommerce.sbecom.repository.CartItemRepository;
 import uk.gegc.ecommerce.sbecom.repository.CartRepository;
 import uk.gegc.ecommerce.sbecom.repository.ProductRepository;
-import uk.gegc.ecommerce.sbecom.service.CartSevice;
+import uk.gegc.ecommerce.sbecom.service.CartService;
 import uk.gegc.ecommerce.sbecom.utils.AuthUtil;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 @Service
-public class CartServiceImpl implements CartSevice {
+public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final AuthUtil authUtils;
     private final ProductRepository productRepository;
@@ -95,6 +95,11 @@ public class CartServiceImpl implements CartSevice {
                 .stream()
                 .map(cart ->{
                     CartDto cartDto = modelMapper.map(cart, CartDto.class);
+                    cart.getCartItems()
+                            .forEach(c ->
+                                    c.getProduct()
+                                            .setQuantity(
+                                                    c.getQuantity()));
                     List<ProductDto> productDtos = cart.getCartItems()
                             .stream()
                             .map(p -> modelMapper.map(p.getProduct(), ProductDto.class)).toList();
@@ -104,6 +109,24 @@ public class CartServiceImpl implements CartSevice {
                 .toList();
 
         return cartDtos;
+    }
+
+    @Override
+    public CartDto getCart(String email, Long cartId) {
+        Cart cart = cartRepository.findCartByEmailAndCartId(email, cartId);
+        if (cart == null) throw new ResourceNotFoundException("Cart", "cartId", cartId);
+        CartDto cartDto = modelMapper.map(cart, CartDto.class);
+        cart.getCartItems()
+                .forEach(c ->
+                        c.getProduct()
+                        .setQuantity(
+                                c.getQuantity()));
+        List<ProductDto> productDtos = cart.getCartItems()
+                .stream()
+                .map(product -> modelMapper.map(product.getProduct(), ProductDto.class))
+                .toList();
+        cartDto.setProducts(productDtos);
+        return cartDto;
     }
 
     private Cart createCart() {

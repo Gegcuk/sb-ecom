@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gegc.ecommerce.sbecom.dto.request.CartDto;
-import uk.gegc.ecommerce.sbecom.service.CartSevice;
+import uk.gegc.ecommerce.sbecom.model.Cart;
+import uk.gegc.ecommerce.sbecom.repository.CartRepository;
+import uk.gegc.ecommerce.sbecom.service.CartService;
+import uk.gegc.ecommerce.sbecom.utils.AuthUtil;
 
-import java.lang.annotation.Repeatable;
 import java.util.List;
 
 @RestController
@@ -15,7 +17,9 @@ import java.util.List;
 @RequestMapping("/api/cart")
 public class CartController {
 
-    private final CartSevice cartSevice;
+    private final CartService cartSevice;
+    private final AuthUtil authUtil;
+    private final CartRepository cartRepository;
 
     @PostMapping("/products/{productId}/quantity/{quantity}")
     public ResponseEntity<CartDto> addProductToCart(@PathVariable Long productId,
@@ -29,6 +33,14 @@ public class CartController {
     public ResponseEntity<List<CartDto>> getCarts(){
         List<CartDto> cartDtos = cartSevice.getAllCarts();
         return new ResponseEntity<>(cartDtos, HttpStatus.FOUND);
+    }
+
+    @GetMapping("/cart")
+    public ResponseEntity<CartDto> getCartByUserId(){
+        String email = authUtil.loggedInEmail();
+        Cart cart = cartRepository.findCartByEmail(email);
+        CartDto cartDto = cartSevice.getCart(email, cart.getCartId());
+        return new ResponseEntity<>(cartDto, HttpStatus.FOUND);
     }
 
 }
