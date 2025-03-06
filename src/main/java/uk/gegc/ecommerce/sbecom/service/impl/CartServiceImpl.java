@@ -1,7 +1,9 @@
 package uk.gegc.ecommerce.sbecom.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PutMapping;
 import uk.gegc.ecommerce.sbecom.dto.request.CartDto;
 import uk.gegc.ecommerce.sbecom.dto.request.ProductDto;
 import uk.gegc.ecommerce.sbecom.exception.APIException;
@@ -128,6 +130,62 @@ public class CartServiceImpl implements CartService {
         cartDto.setProducts(productDtos);
         return cartDto;
     }
+
+    @Transactional
+    @Override
+    public CartDto updateProductQuantityInCart(Long productId, int quantity) {
+
+        String email = authUtils.loggedInEmail();
+        Cart userCart = cartRepository.findCartByEmail(email);
+        Long cartId = userCart.getCartId();
+
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(()->new ResourceNotFoundException("Cart", "cartid", cartId));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("ProductId", "productId", productId));
+
+        if(product.getQuantity() == 0)
+            throw new APIException(product.getProductName() + "is not available.");
+
+        if(product.getQuantity() < quantity)
+            throw new APIException("Please, make an order of the " + product.getProductName()
+             + " less than or equal to the quantity = " + product.getQuantity() + ".");
+
+        CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(productId, cartId);
+
+        if(cartItem == null)
+            throw new APIException("Product " + product.getProductName() + " not available in the cart");
+
+        cartItem.setProductPrice(product.getSpecialPrice());
+        cartItem.setQuantity(product.getQuantity() + quantity);
+        cartItem.setDiscount(product.getDiscount());
+        cart.setTotalPrice(cart.getTotalPrice() + (cartItem.getProductPrice() * cartItem.getQuantity()));
+        cartRepository.save(cart);
+        CartItem updatedItem = cartItemRepository.save(cartItem);
+        if(updatedItem.getQuantity() == 0)
+            cartItemRepository.deleteById(updatedItem.getCartItemId());
+
+        CartDto cartDto = modelMapper.map(cart, CartDto.class);
+
+        List<CartItem> cartItems = cart.getCartItems();
+
+        Stream<ProductDto> productDtoStream = cartItems
+                .stream()
+                .map(
+                        item -> {
+                            ProductDto prd = modelMapper.map(item.getProduct(), ProductDto.class);
+                            prd.setQuantity(item.getQuantity());
+                            return prd;
+                        }
+                );
+
+        cartDto.setProducts(productDtoStream.toList());
+
+        return cartDto;
+    }
+
+    @PutMapping
 
     private Cart createCart() {
         Cart userCart = cartRepository.findCartByEmail(authUtils.loggedInEmail());
