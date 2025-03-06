@@ -23,11 +23,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/public/init/products")
-    private void initDbWithDefaultProducts() {
-        productService.initDbWithDefaultValues();
-    }
-
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDtoResponse> addProduct(@Valid @RequestBody ProductDto product,
                                                          @PathVariable(name = "categoryId") Long categoryId){

@@ -17,11 +17,6 @@ import static org.springframework.http.HttpStatus.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/public/init/categories")
-    private void initDbWithDefault(){
-        categoryService.initDbWithDefaultValues();
-    }
-
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryDtoResponse> getAllCategories(
             @RequestParam(name = "page", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
