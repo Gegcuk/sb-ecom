@@ -4,12 +4,8 @@ package uk.gegc.ecommerce.sbecom.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -34,10 +30,11 @@ public class Payment {
     private String pgName;
 
 
-    public Payment(String pgPaymentId, String pgStatus, String pgResponseMessage, String pgName) {
-        this.pgPaymentId = pgPaymentId;
+    public Payment(String paymentMethod, String pgName, String pgId, String pgStatus, String pgResponseMessage) {
         this.pgStatus = pgStatus;
         this.pgResponseMessage = pgResponseMessage;
         this.pgName = pgName;
+        this.paymentMethod = paymentMethod;
+        this.pgPaymentId = pgId;
     }
 }
