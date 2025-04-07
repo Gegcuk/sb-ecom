@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gegc.ecommerce.sbecom.security.services.UserDetailsServiceImpl;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -27,6 +28,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+    private static final String[] PUBLIC_URLS = {
+            "/api/auth/",
+            "/api/public/",
+            "/api/test/",
+            "/swagger-ui/",
+            "/v3/api-docs/",
+            "/h2-console/",
+            "/images/",
+            "/public/",
+            "/error"
+    };
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return Arrays.stream(PUBLIC_URLS).anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
