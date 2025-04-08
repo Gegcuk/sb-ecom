@@ -29,7 +29,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     private static final String[] PUBLIC_URLS = {
-            "/api/auth/",
+            "/api/auth/signin",
+            "/api/auth/signup",
+            "/api/auth/logout",
             "/api/public/",
             "/api/test/",
             "/swagger-ui/",
