@@ -40,6 +40,9 @@ public class ProductServiceImpl implements ProductService {
     @Value("${project.image}")
     private String path;
 
+    @Value("${image.base.url}")
+    private String imageBaseUrl;
+
     @Override
     public ProductDtoResponse addProduct(ProductDto productDto, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
@@ -71,12 +74,19 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductDto> productDtoList = productPage.getContent()
                 .stream()
-                .map((element) -> modelMapper
-                    .map(element, ProductDto.class))
+                .map((element) -> {
+                    ProductDto productDto = modelMapper.map(element, ProductDto.class);
+                    productDto.setImage(constructImageUrl(element.getImage()));
+                    return productDto;
+                })
                 .toList();
         ProductDtoResponse productDtoResponse = new ProductDtoResponse(productDtoList);
         setResponseEntityProperties(productDtoResponse, productPage);
         return productDtoResponse;
+    }
+
+    private String constructImageUrl(String imageName){
+        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
 
     @Override
