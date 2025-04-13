@@ -8,13 +8,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gegc.ecommerce.sbecom.dto.request.AddressDto;
 import uk.gegc.ecommerce.sbecom.model.User;
+import uk.gegc.ecommerce.sbecom.repository.AddressRepository;
 import uk.gegc.ecommerce.sbecom.security.jwt.AuthTokenFilter;
 import uk.gegc.ecommerce.sbecom.security.jwt.JwtUtils;
 import uk.gegc.ecommerce.sbecom.service.AddressService;
 import uk.gegc.ecommerce.sbecom.utils.AuthUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -68,6 +73,26 @@ public class AddressControllerTest {
                         .content("{\"buildingName\":\"1\", \"street\":\"Kew Foot\", \"city\":\"SPb\", \"zipcode\":\"TW10TW9\", \"country\":\"UK\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.street").value("Kew Foot"));
+    }
+
+    @Test
+    @WithMockUser(username = "user1", roles = {"USER"})
+    public void testGetAllAddressesReturnsOkStatusAndAddresses() throws Exception{
+        List<AddressDto> addressDtoList = new ArrayList<>();
+        AddressDto inputDto = new AddressDto();
+        inputDto.setBuildingName("1");
+        inputDto.setStreet("Kew Foot");
+        inputDto.setCity("SPb");
+        inputDto.setZipcode("TW10TW9");
+        inputDto.setCountry("UK");
+        addressDtoList.add(inputDto);
+
+        when(addressService.getAllAddresses()).thenReturn(addressDtoList);
+
+        mockMvc.perform(get("/api/addresses").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].street").value("Kew Foot"))
+                .andExpect(jsonPath("$[0].city").value("SPb"));
     }
 
 }
