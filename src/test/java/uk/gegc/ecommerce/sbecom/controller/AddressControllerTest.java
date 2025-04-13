@@ -95,4 +95,27 @@ public class AddressControllerTest {
                 .andExpect(jsonPath("$[0].city").value("SPb"));
     }
 
+    @Test
+    @WithMockUser(username = "user1", roles = {"USER"})
+    public void testGetAddressByIdReturnsOk() throws Exception{
+
+        Long addressId = 1L;
+        AddressDto inputDto = new AddressDto();
+        inputDto.setBuildingName("1");
+        inputDto.setStreet("Kew Foot");
+        inputDto.setCity("SPb");
+        inputDto.setZipcode("TW10TW9");
+        inputDto.setCountry("UK");
+
+        when(addressService.getAddress(addressId)).thenReturn(inputDto);
+
+        mockMvc.perform(get("/api/address/{addressId}", addressId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.street").value("Kew Foot"))
+                .andExpect(jsonPath("$.city").value("SPb"));
+
+
+    }
+
 }
